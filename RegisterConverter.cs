@@ -116,7 +116,7 @@ namespace TessyRegisterConverter
             StringBuilder defineName = new StringBuilder();
             string defineType, modifiedLine;
             char currentChar;
-            int index;
+            int index, targetIndex;
 
             /*check if line contains #define*/
             index = Line.IndexOf("#define");
@@ -133,8 +133,8 @@ namespace TessyRegisterConverter
                     index++;
                     currentChar = Line[index];
                 }
-                /* index is on first value in define name now */
-                while (!char.IsWhiteSpace(currentChar) && index < (Line.Length - 1))
+                /* index is on first value in define name now. A valid name in C is number, letter, or _ only */
+                while ((char.IsLetterOrDigit(currentChar) || currentChar == '_') && index < (Line.Length - 1))
                 {
                     defineName.Append(currentChar);
                     index++;
@@ -184,13 +184,15 @@ namespace TessyRegisterConverter
                     return Line;
 
                 /* Get define target */
-                while (!char.IsWhiteSpace(currentChar) && currentChar != '/' && index < (Line.Length - 1))
+                targetIndex = index;
+                while ((char.IsLetterOrDigit(currentChar) || currentChar == '_') && index < (Line.Length - 1))
                 {
                     defineTarget.Append(currentChar);
                     index++;
                     currentChar = Line[index];
                 }
-                modifiedLine = Line.Replace(defineTarget.ToString(), "&" + VariableHeader + defineName.ToString());
+                modifiedLine = Line.Remove(targetIndex, defineTarget.Length);
+                modifiedLine = modifiedLine.Insert(targetIndex, " &" + VariableHeader + defineName.ToString());
             }
             else
             {
