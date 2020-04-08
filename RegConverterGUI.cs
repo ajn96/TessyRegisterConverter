@@ -14,6 +14,7 @@ namespace TessyRegisterConverter
     public partial class RegConverterGUI : Form
     {
         private Thread workerThread;
+        private RegisterConverter converter;
 
         public RegConverterGUI()
         {
@@ -21,6 +22,15 @@ namespace TessyRegisterConverter
             SourcePath.Click += SourcePath_Clicked;
             DestPath.Click += DestPath_Clicked;
             SizeChanged += this_SizeChanged;
+            converter = new RegisterConverter();
+            selectedTypes.View = View.Details;
+            selectedTypes.Columns.Add("Types To Replace");
+            /* Add defaults */
+            foreach(string replacementType in converter.GetTypesToReplace)
+            {
+                selectedTypes.Items.Add(replacementType);
+            }
+            selectedTypes.Columns[0].Width = selectedTypes.Width - 4;
         }
 
         private void bnt_Convert_Click(object sender, EventArgs e)
@@ -31,7 +41,6 @@ namespace TessyRegisterConverter
 
         private void convertWork()
         {
-            RegisterConverter converter = new RegisterConverter();
             btn_Convert.Invoke((MethodInvoker)delegate { btn_Convert.Enabled = false; });
             try
             {
@@ -65,8 +74,21 @@ namespace TessyRegisterConverter
 
         private void this_SizeChanged(object sender, EventArgs e)
         {
-            SourcePath.Width = this.Width - (109);
-            DestPath.Width = this.Width - (109);
+            SourcePath.Width = this.Width - 109;
+            DestPath.Width = this.Width - 109;
+            selectedTypes.Width = this.Width - 330;
+        }
+
+        private void btn_AddType_Click(object sender, EventArgs e)
+        {
+            converter.AddTypeToReplace(TypeToAdd.Text);
+            selectedTypes.Items.Add(TypeToAdd.Text);
+        }
+
+        private void btn_ClearTypes_Click(object sender, EventArgs e)
+        {
+            converter.ClearTypesToReplace();
+            selectedTypes.Items.Clear();
         }
     }
 }
