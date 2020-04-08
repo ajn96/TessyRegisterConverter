@@ -11,9 +11,9 @@ namespace TessyRegisterConverter
     {
         #region "Private Members"
 
-        string m_variableHeader;
-        List<string> m_types;
-        int m_replacements;
+        private string m_variableHeader;
+        private List<string> m_types;
+        private int m_replacements;
 
         #endregion
 
@@ -114,38 +114,38 @@ namespace TessyRegisterConverter
         {
             StringBuilder defineTarget = new StringBuilder();
             StringBuilder defineName = new StringBuilder();
-            string defineType = "";
+            string defineType, modifiedLine;
             char currentChar;
-            string modifiedLine = Line;
-            int defineIndex, index;
+            int index;
 
             /*check if line contains #define*/
-            defineIndex = Line.IndexOf("#define");
+            index = Line.IndexOf("#define");
 
-            if(defineIndex != -1)
+            if(index != -1)
             {
                 /* Get index after #define */
-                index = defineIndex + 7;
+                index += 7;
 
                 /* Find the define name */
                 currentChar = Line[index];
-                while(char.IsWhiteSpace(currentChar) && index < Line.Length)
+                while(char.IsWhiteSpace(currentChar) && index < (Line.Length - 1))
                 {
                     index++;
                     currentChar = Line[index];
                 }
                 /* index is on first value in define name now */
-                while (!char.IsWhiteSpace(currentChar) && index < Line.Length)
+                while (!char.IsWhiteSpace(currentChar) && index < (Line.Length - 1))
                 {
                     defineName.Append(currentChar);
                     index++;
                     currentChar = Line[index];
                 }
                 /* Make sure we haven't parsed entire line */
-                if (index == Line.Length)
+                if (index == (Line.Length - 1))
                     return Line;
 
                 /* Find the define type */
+                defineType = "";
                 for(int i = 0; i < m_types.Count(); i++)
                 {
                     if (Line.Contains(m_types[i]))
@@ -157,9 +157,40 @@ namespace TessyRegisterConverter
                 /* Check that it is pointer type */
                 index = Line.IndexOf(defineType) + defineType.Length;
 
-                /* Find define target value */
+                currentChar = Line[index];
+                while(currentChar != '*' && index < (Line.Length - 1))
+                {
+                    index++;
+                    currentChar = Line[index];
+                }
+                /* Make sure we're not looking at a comment start */
+                if (Line[index - 1] == '/')
+                    return Line;
 
+                /* Reached end of line */
+                if (index == (Line.Length - 1))
+                    return Line;
 
+                /* Move forward to define target value */
+                index++;
+                currentChar = Line[index];
+                while((char.IsWhiteSpace(currentChar) || currentChar == '(' || currentChar == ')' || currentChar == '*') && index < (Line.Length - 1))
+                {
+                    index++;
+                    currentChar = Line[index];
+                }
+                /* Reached end of line */
+                if (index == (Line.Length - 1))
+                    return Line;
+
+                /* Get define target */
+                while (!char.IsWhiteSpace(currentChar) && currentChar != '/' && index < (Line.Length - 1))
+                {
+                    defineTarget.Append(currentChar);
+                    index++;
+                    currentChar = Line[index];
+                }
+                modifiedLine = Line.Replace(defineTarget.ToString(), "&" + VariableHeader + defineName.ToString());
             }
             else
             {
