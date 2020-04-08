@@ -20,6 +20,7 @@ namespace TessyRegisterConverter
             InitializeComponent();
             SourcePath.Click += SourcePath_Clicked;
             DestPath.Click += DestPath_Clicked;
+            SizeChanged += this_SizeChanged;
         }
 
         private void bnt_Convert_Click(object sender, EventArgs e)
@@ -60,6 +61,12 @@ namespace TessyRegisterConverter
             if (savePath.ShowDialog() != DialogResult.OK)
                 return;
             DestPath.Text = savePath.FileName;
+        }
+
+        private void this_SizeChanged(object sender, EventArgs e)
+        {
+            SourcePath.Width = this.Width - (109);
+            DestPath.Width = this.Width - (109);
         }
     }
 }

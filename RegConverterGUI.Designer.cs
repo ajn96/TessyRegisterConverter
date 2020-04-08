@@ -80,7 +80,7 @@
             // 
             // btn_Convert
             // 
-            this.btn_Convert.Location = new System.Drawing.Point(214, 86);
+            this.btn_Convert.Location = new System.Drawing.Point(15, 85);
             this.btn_Convert.Name = "btn_Convert";
             this.btn_Convert.Size = new System.Drawing.Size(75, 49);
             this.btn_Convert.TabIndex = 5;
@@ -92,15 +92,17 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(486, 147);
+            this.ClientSize = new System.Drawing.Size(484, 146);
             this.Controls.Add(this.btn_Convert);
             this.Controls.Add(this.replaceExisting);
             this.Controls.Add(this.DestPath);
             this.Controls.Add(this.SourcePath);
             this.Controls.Add(this.lab_dest);
             this.Controls.Add(this.lab_src);
+            this.MaximumSize = new System.Drawing.Size(2000, 185);
+            this.MinimumSize = new System.Drawing.Size(300, 185);
             this.Name = "RegConverterGUI";
-            this.Text = "Form1";
+            this.Text = "Tessy Register Converter";
             this.ResumeLayout(false);
             this.PerformLayout();
 
