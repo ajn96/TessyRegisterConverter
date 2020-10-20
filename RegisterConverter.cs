@@ -149,7 +149,10 @@ namespace TessyRegisterConverter
                 for(int i = 0; i < m_types.Count(); i++)
                 {
                     if (Line.Contains(m_types[i]))
+                    {
                         defineType = m_types[i];
+                        break;
+                    }
                 }
                 if (defineType == "")
                     return Line;
@@ -202,6 +205,9 @@ namespace TessyRegisterConverter
 
             /* Build result */
             m_replacements++;
+            /* If the type is void * the replace with uint32_t */
+            if (defineType == "void *")
+                defineType = "uint32_t";
             return "extern " + defineType + " " + VariableHeader + defineName.ToString() + ";" + " /* The line has been auto-generated to allow register replacement in Tessy */" + Environment.NewLine + modifiedLine;
         }
 
